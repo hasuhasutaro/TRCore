@@ -6,6 +6,7 @@ use pocketmine\player\Player;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use noahasu\TRCore\event\field\{EnemyExitsFieldEvent, AllEnemyExitsFieldEvent};
+use noahasu\TRCore\player\TRPlayer;
 
 class Field {
     /** @var string */
@@ -22,44 +23,40 @@ class Field {
         $this->baseWorld = $baseWorld;
     }
 
-    public function getName(): string {
-        return $this->name;
+    /**
+     * フィールドにプレイヤーがスポーンする際に呼び出されるメソッド
+     * 
+     * @param TRPlayer $player
+     * @return void
+     */
+    public function playerSpawnField(TRPlayer $player): void {
+        if ($this->isPlayerInField($player)) {
+            return;
+        }
+
+        if ($player->isInField()) {
+            $player->getField()->playerExitsField($player);
+        }
+
+        $this->addFieldPlayer($player);
     }
 
-    public function getFieldEnemies() {
-        return $this->fieldEnemies;
-    }
+    /**
+     * フィールドに敵がスポーンする際に呼び出されるメソッド
+     * 
+     * @param Entity $enemy
+     * @return void
+     */
+    public function enemySpawnField(Entity $enemy): void {
+        if ($this->isEnemyInField($enemy)) {
+            return;
+        }
 
-    public function getFieldPlayers() {
-        return $this->fieldPlayers;
-    }
+        $this->addFieldEnemy($enemy);
 
-    public function getBaseWorld(): World {
-        return $this->baseWorld;
-    }
-
-    public function addFieldEnemy(Entity $enemy) {
-        $this->fieldEnemies[$enemy->getId()] = $enemy;
-    }
-
-    public function addFieldPlayer(Player $player) {
-        $this->fieldPlayers[$player->getId()] = $player;
-    }
-
-    public function removeFieldEnemy(Entity $enemy) {
-        unset($this->fieldEnemies[$enemy->getId()]);
-    }
-
-    public function removeFieldPlayer(Player $player) {
-        unset($this->fieldPlayers[$player->getId()]);
-    }
-
-    public function isPlayerInField(Player $player): bool {
-        return isset($this->fieldPlayers[$player->getId()]);
-    }
-
-    public function isEnemyInField(Entity $enemy): bool {
-        return isset($this->fieldEnemies[$enemy->getId()]);
+        foreach($this->fieldPlayers as $player) {
+            $enemy->spawnTo($player);
+        }
     }
 
     /**
@@ -69,10 +66,12 @@ class Field {
      * @param Position $teleport 退出時のテレポート先
      * @return void
      */
-    public function playerExitsField(Player $player, Position $teleport): void {
+    public function playerExitsField(Player $player, ?Position $teleport = null): void {
         if ($this->isPlayerInField($player)) {
             $this->removeFieldPlayer($player);
-            $player->teleport($teleport, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
+
+            if (isset($position))
+                $player->teleport($teleport, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
         }
 
         foreach($this->fieldEnemies as $enemy) {
@@ -102,6 +101,46 @@ class Field {
             $ev = new AllEnemyExitsFieldEvent($this);
             $ev->call();
         }
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getFieldEnemies() {
+        return $this->fieldEnemies;
+    }
+
+    public function getFieldPlayers() {
+        return $this->fieldPlayers;
+    }
+
+    public function getBaseWorld(): World {
+        return $this->baseWorld;
+    }
+
+    private function addFieldEnemy(Entity $enemy) {
+        $this->fieldEnemies[$enemy->getId()] = $enemy;
+    }
+
+    private function addFieldPlayer(Player $player) {
+        $this->fieldPlayers[$player->getId()] = $player;
+    }
+
+    private function removeFieldEnemy(Entity $enemy) {
+        unset($this->fieldEnemies[$enemy->getId()]);
+    }
+
+    private function removeFieldPlayer(Player $player) {
+        unset($this->fieldPlayers[$player->getId()]);
+    }
+
+    public function isPlayerInField(Player $player): bool {
+        return isset($this->fieldPlayers[$player->getId()]);
+    }
+
+    public function isEnemyInField(Entity $enemy): bool {
+        return isset($this->fieldEnemies[$enemy->getId()]);
     }
 
     public function hasEnemy(): bool {
