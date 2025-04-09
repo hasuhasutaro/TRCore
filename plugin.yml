@@ -1,0 +1,6 @@
+name: CheckItemNbtPlugin
+version: 1.0.0
+main: noahasu\TRCore\Main
+api: 5.0.0
+load: POSTWORLD
+author: noahasu
