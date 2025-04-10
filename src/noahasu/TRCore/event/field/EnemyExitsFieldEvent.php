@@ -10,18 +10,29 @@ use pocketmine\entity\Entity;
 
 class EnemyExitsFieldEvent extends Event {
 
-    private BaseEntity $enemy;
+    /** @var Entity&\noahasu\TRCore\entity\TREntityInterface $enemy */
+    private Entity $enemy;
     private Field $field;
 
-    public function __construct(BaseEntity $enemy, Field $field) {
+    /**
+     * @param Entity&\noahasu\TRCore\entity\TREntityInterface $enemy
+     * @param Field $field
+     */
+    public function __construct(Entity $enemy, Field $field) {
         $this->enemy = $enemy;
         $this->field = $field;
     }
 
-    public function getEnemy(): BaseEntity {
+    /**
+     * @return Entity&\noahasu\TRCore\entity\TREntityInterface
+     */
+    public function getEnemy(): Entity {
         return $this->enemy;
     }
 
+    /**
+     * @return Field
+     */
     public function getField(): Field {
         return $this->field;
     }

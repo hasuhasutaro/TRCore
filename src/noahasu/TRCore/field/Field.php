@@ -9,9 +9,14 @@ use noahasu\TRCore\event\field\{EnemyExitsFieldEvent, AllEnemyExitsFieldEvent};
 use noahasu\TRCore\player\TRPlayer;
 
 class Field {
+    /** @var int */
+    private static int $nextId = 0;
+
+    /** @var int */
+    private string $id;
     /** @var string */
     private string $name;
-    /** @var Entity[] */
+    /** @var Entity&\noahasu\TRCore\entity\TREntityInterface $enemy[] */
     private array $fieldEnemies = [];
     /** @var Player[] */
     private array $fieldPlayers = [];
@@ -21,6 +26,19 @@ class Field {
     public function __construct(string $name, World $baseWorld) {
         $this->name = $name;
         $this->baseWorld = $baseWorld;
+        $this->id = $this->getNextId();
+    }
+
+    private function getNextId(): int {
+        return self::$nextId++;
+    }
+
+    public function getId(): int {
+        return $this->id;
+    }
+    
+    public function getFieldName(): string {
+        return $this->name;
     }
 
     /**
@@ -44,7 +62,7 @@ class Field {
     /**
      * フィールドに敵がスポーンする際に呼び出されるメソッド
      * 
-     * @param Entity $enemy
+     * @param Entity&\noahasu\TRCore\entity\TREntityInterface $enemy
      * @return void
      */
     public function enemySpawnField(Entity $enemy): void {
@@ -82,7 +100,7 @@ class Field {
     /**
      * 敵がフィールドから退出する際に呼び出されるメソッド
      * 
-     * @param Entity $enemy
+     * @param Entity&\noahasu\TRCore\entity\TREntityInterface $enemy
      * @return void
      */
     public function enemyExitsField(Entity $enemy): void {
@@ -139,6 +157,10 @@ class Field {
         return isset($this->fieldPlayers[$player->getId()]);
     }
 
+    /**
+     * @param Entity&\noahasu\TRCore\entity\TREntityInterface $enemy
+     * @return bool
+     */
     public function isEnemyInField(Entity $enemy): bool {
         return isset($this->fieldEnemies[$enemy->getId()]);
     }
