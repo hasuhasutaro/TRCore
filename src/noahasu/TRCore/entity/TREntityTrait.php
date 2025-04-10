@@ -6,14 +6,10 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\Location;
 use pocketmine\player\Player;
 
-abstract class BaseEntity extends Entity {
+trait TREntityTrait
+{
     /** @var ?Field */
     protected ?Field $field = null;
-
-    public function __construct(Field $field, Location $location) {
-        parent::__construct($location);
-        $this->field = $field;
-    }
 
     public function getField(): ?Field {
         return $this->field;
@@ -27,9 +23,12 @@ abstract class BaseEntity extends Entity {
         return isset($this->field);
     }
 
-    public function spawnTo(Player $player): void
-    {
-        if ($this->isAlive() && $this->field->isPlayerInField($player)) {
+    public function isInField(): bool {
+        return $this->field !== null;
+    }
+
+    public function spawnTo(Player $player): void {
+        if ($this->isAlive() && $this->field?->isPlayerInField($player) ?? false) {
             parent::spawnTo($player);
         }
     }
