@@ -1,6 +1,17 @@
-name: CheckItemNbtPlugin
+name: TRCore
 version: 1.0.0
 main: noahasu\TRCore\Main
 api: 5.0.0
 load: POSTWORLD
 author: noahasu
+
+permissions:
+  trcore.command.changefield:
+    description: Allows the player to use the chf command.
+    default: true
+  trcore.command.createfield:
+    description: Allows the player to use the crf command.
+    default: true
+  trcore.command.spawntf:
+    description: Allows the player to use the spawntf command.
+    default: true

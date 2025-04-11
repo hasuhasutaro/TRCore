@@ -28,7 +28,9 @@ trait TREntityTrait
     }
 
     public function spawnTo(Player $player): void {
+        $player->sendMessage("prepare spawing.");
         if ($this->isAlive() && $this->field?->isPlayerInField($player) ?? false) {
+            $player->sendMessage("entity spawn to you.");
             parent::spawnTo($player);
         }
     }

@@ -57,6 +57,12 @@ class Field {
         }
 
         $this->addFieldPlayer($player);
+        
+        foreach($this->fieldEnemies as $enemy) {
+            $enemy->spawnTo($player);
+        }
+
+        $player->sendActionBarMessage("§aフィールドにスポーンしました！");
     }
 
     /**
@@ -71,8 +77,10 @@ class Field {
         }
 
         $this->addFieldEnemy($enemy);
+        $enemy->setField($this);
 
         foreach($this->fieldPlayers as $player) {
+            $player->sendActionBarMessage("§aフィールドに敵がスポーンしました！");
             $enemy->spawnTo($player);
         }
     }
@@ -94,6 +102,11 @@ class Field {
 
         foreach($this->fieldEnemies as $enemy) {
             $enemy->despawnFrom($player);
+        }
+
+        foreach($this->fieldPlayers as $p) {
+            $p->hidePlayer($player);
+            $player->hidePlayer($p);
         }
     }
 
