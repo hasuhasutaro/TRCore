@@ -9,13 +9,15 @@ class TRPlayer extends Player {
     private ?Field $field = null;
 
     public function setField(?Field $field): void {
-        if ($this?->isInField() ?? false) {
+        // 現在のフィールドから退出
+        if ($this->isInField()) {
             $this->field->playerExitsField($this);
         }
 
+        // 新しいフィールドに設定
         $this->field = $field;
 
-        if (isset($field)) {
+        if ($field !== null) {
             $field->playerSpawnField($this);
         }
     }

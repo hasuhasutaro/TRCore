@@ -43,7 +43,9 @@ class Field {
 
     /**
      * フィールドにプレイヤーがスポーンする際に呼び出されるメソッド
+     * Player.setField()を呼び出すことで、フィールドにスポーンすることができる。
      * 
+     * @deprecated このメソッドは非推奨です。TRPlayer.setField()を使用してください。
      * @param TRPlayer $player
      * @return void
      */
